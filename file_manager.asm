@@ -1,5 +1,5 @@
 .data
-	debug_mode: 	  .word 1   # Variable global para indicar el modo de depuración (1 para habilitado, 0 para deshabilitado)
+	debug_mode: 	  .word 0   # Variable global para indicar el modo de depuración (1 para habilitado, 0 para deshabilitado)
 	buffer:           .space  1024  			# Buffer para leer el archivo
 	errorOpenMsg:     .asciiz "Error al abrir el archivo\n"
 	errorReadMsg:	  .asciiz "Error al leer el archivo\n"
