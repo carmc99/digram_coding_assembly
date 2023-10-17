@@ -1,5 +1,5 @@
 .data
-	debug_mode: 	  .word 1   # Variable global para indicar el modo de depuración (1 para habilitado, 0 para deshabilitado)
+	debug_mode: 	  .word 0   # Variable global para indicar el modo de depuración (1 para habilitado, 0 para deshabilitado)
 	digramFileName:   .asciiz "dictionary.txt"  	# Nombre del archivo que contiene el diccionario
 	digramBuffer:     .space  1024  			# Buffer para el diccionario
 	inputFileName:    .asciiz "digram_test.java"	# Nombre del archivo a codificar
@@ -18,26 +18,30 @@ main:
     
     # Cerrar el archivo
     li $v0, 16               # Código del sistema para cerrar el archivo
+    # $a0 <- proviene el descriptor, por ello no se especifica
     syscall
     
     la	$a0, inputFileName
     la	$a1, inputFileBuffer	
     jal     openFile
     
-    move $s1, $v0				# Obtener buffer resultante de $0. $s1 -> Contiene direccion del archivo a codificar
+    move $s1, $v0				# Obtener buffer resultante de $v0. $s1 -> Contiene direccion del archivo a codificar
      
     # Cerrar el archivo
     li $v0, 16               # Código del sistema para cerrar el archivo
+    # $a0 <- proviene el descriptor, por ello no se especifica
     syscall
 
     # Imprimir el contenido leído si el modo depuracion esta habilitado
     ################ DEBUG ###############
     move $a0, $s1
-    beq $s7, 1, debug
+    beq  $s7, $zero, notDebug
+    jal debug
+    notDebug:
     ################ DEBUG ###############
     
-    #move $a0, $s0
-    #jal encondedMessage
+    move $a0, $s1
+    jal encondedMessage
     
     # terminate program
     li      $v0, 10
