@@ -41,14 +41,18 @@ fileOpened:
 	
 	bltz $v0, fileReadError     	# Si $v0 es menor que cero, erro al leer el archivo
 	
+	################ DEBUG ###############
     # Imprimir el contenido leído si el modo depuracion esta habilitado
     la $a0, buffer
     beq $t1, 1, debug
-
+    ################ DEBUG ###############
+    
     # Cerrar el archivo
     li $v0, 16               # Código del sistema para cerrar el archivo
     move $a0, $v0            # Descriptor de archivo
     syscall
+    
+    move $v0, $a1 			 # Devolver la dirección del búfer en $v0
 
 	jr $ra
 fileOpenError:
