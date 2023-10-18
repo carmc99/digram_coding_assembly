@@ -9,6 +9,7 @@
 .globl main
 main:
 	lw $s7, debug_mode         # Cargar el valor de debug_mode en $s7
+	li $s2, 3  # Tamno del diccionario
 	
 	la	$a0, digramFileName	
 	la	$a1, digramBuffer

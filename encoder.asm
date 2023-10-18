@@ -6,7 +6,6 @@ carriageReturn:   .asciiz "\r"   # Carácter de retorno de carro
 .text
 
 .globl digramIsPresent
-.globl getDigramKey
 .globl encondedMessage
 
 # Funcion para validar si el digrama se encuentra en el diccionario
@@ -16,43 +15,66 @@ digramIsPresent:
 	 # Param3: $a2 -> Segundo caracter del digrama
     li $v0, 0   # inicializar el resultado como falso
     li $v1, 0   # inicializar el resultado pos del digrama en 0
-    li $t1, 0   # contador para identificar la posicion del digrama
-	
+    li $t1, 0   # inicializa el contador pos digrama en 0
+	move $t8, $s0 # Almacena el diccionario en una variable temporal, para recorrerlo
     loopDigram:
-    
-        lb $t6, ($s0)      # ($t6) currentItem = diccionario[j]
-        addi $s0, $s0, 1   # diccionario[j++]
-    	lb $t7, ($s0)      # ($t7) nextItem = diccionario[j]
+    	lb $t6, ($t8)      # ($t6) currentItem = diccionario[j]
         
-        beq $a1, $t6, checkSecondCharacter
+        addi $t8, $t8, 1   # diccionario[j++]
+    	lb $t7, ($t8)      # ($t7) nextItem = diccionario[j]
+    	beq $t7, 0xD, skipCharacters
+    	
+        ##########
+        li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
+        move $a0, $a1      # Mover el valor de $t3 a $a0
+        syscall 
+    	###########
+        ##########
+        li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
+        move $a0, $t6      # Mover el valor de $t3 a $a0
+        syscall 
+    	###########
+    	##########
+        li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
+        move $a0, $a2      # Mover el valor de $t3 a $a0
+        syscall 
+    	###########
+    	##########
+        li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
+        move $a0, $t7      # Mover el valor de $t3 a $a0
+        syscall 
+    	###########
+    	
+		addi $t1, $t1, 1   # incrementar el contador
+		
+        beq $a1, $t6, checkMessageSecondCharacter
         j digramNotFound
 
-        addiu $s0, $s0, 4   # avanzar al siguiente elemento del diccionario
-        addi $t1, $t1, 1   # incrementar el contador
-
-        bnez $s0, loopDigram   # si no hemos recorrido todos los elementos, continuar el bucle
-
-        j endDigramIsPresent   # si no se encuentra, terminar la función
-
-checkSecondCharacter:
+        bnez $t8, loopDigram   # si no hemos recorrido todos los elementos, continuar el bucle
+		j endDigramIsPresent   # si no se encuentra, terminar la función
+skipCharacters:
+    addiu $t8, $t8, 2   # Avanzar al siguiente carácter (considerando el retorno de carro o salto de línea)
+    bnez $t8, loopDigram   # Si no hemos recorrido todos los elementos, continuar el bucle
+    
+checkMessageSecondCharacter:
+	beqz $a2, digramFound # if (a2 == '') { no comparar, se asume que es un caracter indivisual y no par}
 	beq $a2, $t7, digramFound
-	
+
 digramNotFound:
 	li $v0, 0   # establecer el resultado como falso
-	
-	j endDigramIsPresent
+	li $v1, 0
+	j loopDigram
 
 digramFound:
-    li $v0, 1   # establecer el resultado como verdadero
-    move $v1, $t1 # Mover el valor del contador actual a $v1 - resultado
+    li $v0, 1     # establecer el resultado como verdadero
+    move $v1, $t1 # mover el valor del contador actual a $v1 - resultado
     j endDigramIsPresent
 
 endDigramIsPresent:
-    jr $ra   # regresar de la llamada
-    
-# Funcion para obtener la llave del digrama a partir del caracter de entrada
-getDigramKey:
-    
+	li $t6, 0 # limpiar registro
+	li $t7, 0 # limpiar registro
+    jr $ra   
+      
 # Funcion para codificar un mensaje
 encondedMessage:
 	move $t0, $a0		# Param1: Buffer que contiene el mensaje a codificar
@@ -73,7 +95,11 @@ encondedMessage:
         	# Si llegamos aquí, el digrama está presente
         	j found
 			found:
-			
+			##########
+        	li $v0, 1         # Cargar el sistema para la llamada al servicio de impresión de entero
+        	move $a0, $v1      # Mover el valor de $t3 a $a0
+        	syscall 
+	    	###########
 				
     		no_found:
     		
@@ -81,12 +107,6 @@ encondedMessage:
         	# Si llegamos aquí, el digrama no está presente
     		
     		continue:
-    		##########
-            li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
-            move $a0, $t3      # Mover el valor de $t3 a $a0
-            syscall 
-    		###########
-            
             beqz $t3, end_loop  # Salir del bucle si llegamos al final de la cadena
             beqz $t4, end_loop  # Salir del bucle si llegamos al final de la cadena
             
