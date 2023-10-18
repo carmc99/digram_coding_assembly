@@ -22,27 +22,27 @@ digramIsPresent:
         
         addi $t8, $t8, 1   # diccionario[j++]
     	lb $t7, ($t8)      # ($t7) nextItem = diccionario[j]
-    	beq $t7, 0xD, skipCharacters
+    	beq $t7, 0xD, skipCharacters	
     	
         ##########
-        li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
-        move $a0, $a1      # Mover el valor de $t3 a $a0
-        syscall 
+        #li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
+        #move $a0, $a1      # Mover el valor de $t3 a $a0
+        #syscall 
     	###########
         ##########
-        li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
-        move $a0, $t6      # Mover el valor de $t3 a $a0
-        syscall 
+        #li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
+        #move $a0, $t6      # Mover el valor de $t3 a $a0
+        #syscall 
     	###########
     	##########
-        li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
-        move $a0, $a2      # Mover el valor de $t3 a $a0
-        syscall 
+        #li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
+        #move $a0, $a2      # Mover el valor de $t3 a $a0
+        #syscall 
     	###########
     	##########
-        li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
-        move $a0, $t7      # Mover el valor de $t3 a $a0
-        syscall 
+        #li $v0, 11         # Cargar el sistema para la llamada al servicio de impresión de entero
+        #move $a0, $t7      # Mover el valor de $t3 a $a0
+        #syscall 
     	###########
     	
 		addi $t1, $t1, 1   # incrementar el contador
@@ -50,20 +50,22 @@ digramIsPresent:
         beq $a1, $t6, checkMessageSecondCharacter
         j digramNotFound
 
-        bnez $t8, loopDigram   # si no hemos recorrido todos los elementos, continuar el bucle
-		j endDigramIsPresent   # si no se encuentra, terminar la función
+# Valida que el caracter siguiente no sea carriage_return
 skipCharacters:
-    addiu $t8, $t8, 2   # Avanzar al siguiente carácter (considerando el retorno de carro o salto de línea)
+    addiu $t8, $t8, 2   # Avanzar al siguiente carácter (omitiendo el retorno de carro y salto de línea)
     bnez $t8, loopDigram   # Si no hemos recorrido todos los elementos, continuar el bucle
     
 checkMessageSecondCharacter:
-	beqz $a2, digramFound # if (a2 == '') { no comparar, se asume que es un caracter indivisual y no par}
+	beqz $a2, digramFound # Si el ultimo caracter a comparar es 0, se asume que es un caracter indivisual y no par
 	beq $a2, $t7, digramFound
 
 digramNotFound:
 	li $v0, 0   # establecer el resultado como falso
 	li $v1, 0
-	j loopDigram
+	
+	bnez $t8, loopDigram   # si no hemos recorrido todos los elementos, continuar el bucle
+	j endDigramIsPresent   # si no se encuentra, terminar la función
+	#j loopDigram
 
 digramFound:
     li $v0, 1     # establecer el resultado como verdadero
@@ -114,5 +116,4 @@ encondedMessage:
             addi $t0, $t0, 1  	# Avanzar a la siguiente posición en la cadena
             j loop           	# Volver al inicio del bucle
     end_loop:
-    
-    jr $ra
+    jal returnToMain
