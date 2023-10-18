@@ -1,5 +1,5 @@
 .data
-	debug_mode: 	  .word 0   # Variable global para indicar el modo de depuración (1 para habilitado, 0 para deshabilitado)
+	debug_mode: 	  .word 1   # Variable global para indicar el modo de depuración (1 para habilitado, 0 para deshabilitado)
 	digramFileName:   .asciiz "dictionary.txt"  	# Nombre del archivo que contiene el diccionario
 	digramBuffer:     .space  1024  			# Buffer para el diccionario
 	inputFileName:    .asciiz "digram_test.java"	# Nombre del archivo a codificar
@@ -34,7 +34,7 @@ main:
 
     # Imprimir el contenido leído si el modo depuracion esta habilitado
     ################ DEBUG ###############
-    move $a0, $s1
+    move $a0, $s0
     beq  $s7, $zero, notDebug
     jal debug
     notDebug:
