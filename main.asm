@@ -10,7 +10,7 @@
 .globl returnToMain
 main:
 	lw $s7, debug_mode         # Cargar el valor de debug_mode en $s7
-	li $s3, 7
+	li $s2, 7
 	
 	la	$a0, digramFileName	
 	la	$a1, digramBuffer
@@ -24,7 +24,7 @@ main:
     syscall
     
     la	$a0, inputFileName
-    la	$a1, inputFileBuffer	
+    la	$a1, inputFileBuffer
     jal     openFile
     
     move $s1, $v0				# Obtener buffer resultante de $v0. $s1 -> Contiene direccion del archivo a codificar
