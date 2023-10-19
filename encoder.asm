@@ -45,31 +45,30 @@ digramIsPresent:
         #syscall 
     	###########
     	
-		addi $t1, $t1, 1   # incrementar el contador
-		
         beq $a1, $t6, checkMessageSecondCharacter
         j digramNotFound
 
 # Valida que el caracter siguiente no sea carriage_return
 skipCharacters:
     addiu $t8, $t8, 2   # Avanzar al siguiente carácter (omitiendo el retorno de carro y salto de línea)
-    bnez $t8, loopDigram   # Si no hemos recorrido todos los elementos, continuar el bucle
+    addi $t1, $t1, 1   # incrementar el contador
+    blt $t1, $s2, loopDigram   # Si no hemos recorrido todos los elementos, continuar el bucle
     
 checkMessageSecondCharacter:
-	beqz $a2, digramFound # Si el ultimo caracter a comparar es 0, se asume que es un caracter indivisual y no par
+	beqz $a2, digramFound  # Si el ultimo caracter a comparar es 0, se asume que es un caracter indivisual y no par
 	beq $a2, $t7, digramFound
 
 digramNotFound:
 	li $v0, 0   # establecer el resultado como falso
-	li $v1, 0
+	li $v1, 0 
 	
-	bnez $t8, loopDigram   # si no hemos recorrido todos los elementos, continuar el bucle
+	blt $t1, $s2, loopDigram   # si no hemos recorrido todos los elementos, continuar el bucle
 	j endDigramIsPresent   # si no se encuentra, terminar la función
-	#j loopDigram
 
 digramFound:
     li $v0, 1     # establecer el resultado como verdadero
     move $v1, $t1 # mover el valor del contador actual a $v1 - resultado
+
     j endDigramIsPresent
 
 endDigramIsPresent:
@@ -103,8 +102,13 @@ encondedMessage:
         	syscall 
 	    	###########
 				
+			# Sino encuentra el digrama, busca solo el primer caracter
     		no_found:
-    		
+    			move $a1, $t3       
+    			li $a2, 0
+    			jal digramIsPresent
+    			beq $v0, 1, found
+    			j end_loop
     			
         	# Si llegamos aquí, el digrama no está presente
     		
