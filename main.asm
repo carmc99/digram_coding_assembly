@@ -10,7 +10,7 @@
 .globl returnToMain
 main:
 	lw $s7, debug_mode         # Cargar el valor de debug_mode en $s7
-	li $s2, 8
+	li $s3, 7
 	
 	la	$a0, digramFileName	
 	la	$a1, digramBuffer
