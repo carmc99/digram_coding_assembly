@@ -1,7 +1,8 @@
 .data 
 currentDigram:    .space 100
 errorReadMsg:	  .asciiz "Error al leer el archivo\n"
-    
+encodedMessageBuffer: .space 1024
+
 .text
 
 .globl encondedMessage
@@ -14,6 +15,7 @@ encondedMessage:
 	# $s0 Diccionario original
 	# $s1 Mensaje original
 	# $s2 Tamano del diccionario
+	# $s3 Buffer que contiene el mensaje codificado
 	# $t0 Mensaje temporal
 	# $t1 Diccionario temporal
 	# $t2 Contador
@@ -24,6 +26,7 @@ encondedMessage:
 	# $t7 Bandera, digrama encontrado
 	# $t8 Determina si se buscara un digrama o solo un caracter en el diccionario
 	li $t2, 0
+	la $s3, encodedMessageBuffer
 	loop_main:
             lb $t3, ($t0)  	   
             addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
@@ -73,14 +76,16 @@ encondedMessage:
     		j loop_child
     		continue_main_loop:
     		
-    		li $v0, 1               
-    		move $a0, $t2
-    		syscall
+    		#li $v0, 1               
+    		#move $a0, $t2
+    		#syscall
     		
-    		# Obtener $t5
+    		sb $t2, ($s3)
+    		move $a0, $s3
+    		jal writeFile
+    
     		# Obtener $t2
-    		# Pasar $t2 a binario
-    		# Escribir valor resultante en ouput.txt
+    		# Escribir valor $t2 en output.txt
     		
     		#### Reiniciar valores ####
     		jal reset_values
