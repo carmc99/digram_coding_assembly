@@ -1,6 +1,6 @@
 .data 
 currentDigram:    .space 100
-encodedMessageBuffer: .byte 
+encodedMessageBuffer: .space 1024 
 
 .text
 
@@ -75,13 +75,12 @@ encondedMessage:
     		j loop_child
     		continue_main_loop:
     		
-			li $v0, 1               
-    		move $a0, $t2
-    		syscall
+			#li $v0, 1               
+    		#move $a0, $t2
+    		#syscall
     		
-			#### TODO: 
-    		# Obtener $t2
-    		# Escribir valor $t2 en output.txt
+    		sb $t2, ($s3)  # Almacenar el valor de $t2 en la ubicación actual de $s3
+    		addiu $s3, $s3, 4
     		
     		#### Reiniciar valores ####
     		jal reset_values
@@ -89,7 +88,11 @@ encondedMessage:
 			beqz $t4, end_loop_main    			     
           	j loop_main           	# Volver al inicio del bucle principal
     end_loop_main:
+    li $t2, -1
+    sb $t2, ($s3)   # Almacena un -1 al final, para indicar que alli finaliza el mensaje
+    la $s3, encodedMessageBuffer # Reiniciar el puntero
     
+    # Retorna: $s3 buffer con mensaje codificado
     jal returnToMain
 
 #### Reiniciar valores ####

@@ -1,5 +1,5 @@
 .data
-buffer: .space 32
+bufferItoa: .space 32
 
 .text
 
@@ -7,7 +7,7 @@ buffer: .space 32
 
 # Covierte un entero a codigo ascii
 itoa:
-      la   $t0, buffer+30  # pointer to almost-end of buffer
+      la   $t0, bufferItoa+30  # pointer to almost-end of buffer
       sb   $0, 1($t0)      # null-terminated str
       li   $t1, '0'  
       sb   $t1, ($t0)     # init. with ascii 0

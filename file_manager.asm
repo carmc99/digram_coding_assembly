@@ -4,8 +4,6 @@
 	errorReadMsg:	  .asciiz "Error al leer el archivo\n"
 	errorOpenWriteFileMsg: .asciiz "Error al abrir el archivo de escritura\n"
 	errorWriteFileMsg: .asciiz "Error al escribir en el archivo\n"
-	ouputFileName:   .asciiz "output.txt"  	# Nombre del archivo que contiene el diccionario
-	ouputFileBuffer:     .space  1024  			# Buffer para el diccionario
 
 .text
 
@@ -16,36 +14,32 @@
 
 
 writeFile:
-	#move $t9, $a0
-	# $t9					# Param1: Direccion del archivo
+    move $t0, $a0					# Param1: Direccion del archivo
+	move $t1, $a1					# Parama2: Buffer
     
     # Abrir el archivo para escribir
             
-    la $a0, ouputFileName  		 # Dirección de la cadena que contiene el nombre del archivo
+    la $a0, ($t0)  		 # Dirección de la cadena que contiene el nombre del archivo
     li $a1, 1            # Modo de apertura: 1 para escritura
     li $v0, 13            
     syscall
 
-	move $t9, $v0
     # Verificar si hubo algún error al abrir el archivo
-    bltz $t9, fileWriteOpenError
+    bltz $v0, fileWriteOpenError
     
-
     # Escribir en el archivo
-    move $a0, $t9        # File descriptor devuelto por la llamada a abrir
-    move $a1, $s3       # Dirección de la cadena que se escribirá en el archivo
-    li $a2, 4           # Longitud de la cadena a escribir
+    move $a0, $v0        # File descriptor devuelto por la llamada a abrir
+    move $a1, $t1       # Dirección de la cadena que se escribirá en el archivo
+    li $a2, 8           # Longitud de la cadena a escribir
     li $v0, 15           # Código de la llamada al sistema para escribir en el archivo
     syscall
 
     # Verificar si hubo algún error al escribir en el archivo
     bltz $v0, fileWriteError
-	
-	move $t9, $v0
-	
+
     # Cerrar el archivo
+    move $a0, $v0        # File descriptor devuelto por la llamada a abrir
     li $v0, 16           # Código de la llamada al sistema para cerrar el archivo
-    move $a0, $t9        # File descriptor devuelto por la llamada a abrir
     syscall
 
     # Salir de la función
