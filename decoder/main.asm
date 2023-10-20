@@ -41,6 +41,10 @@ main:
    	move $a0, $s1
     li $v0, 4                # Código del sistema para imprimir cadena
     syscall
+    
+    move $a0, $s1
+    jal decodedMessage
+    
     returnToMain:
 
 end_program:

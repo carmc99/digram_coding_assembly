@@ -38,7 +38,7 @@ writeFile:
 	# Escribir en el archivo
     move $a0, $t0        # File descriptor devuelto por la llamada a abrir
     move $a1, $t1       # Dirección de la cadena que se escribirá en el archivo
-    li $a2, 2           # Longitud de la cadena a escribir
+    li $a2, 8           # Longitud de la cadena a escribir (8 bits)
     li $v0, 15           # Código de la llamada al sistema para escribir en el archivo
     syscall
 

@@ -8,33 +8,35 @@ decodedMessageBuffer: .space 1024
 # Funcion para codificar un mensaje
 
 decodedMessage:
-	move $t0, $a0		# Param1: Buffer que contiene el mensaje a decodificar
-	move $t1, $s0		# Diccionario temporal 		
+	move $t9, $s0		# Diccionario temporal
+	move $t8, $a0		# Param1: Buffer que contiene el mensaje a decodificar 		
 	# Registros
+	# $s0 Diccionario original
+	# $s1 Mensaje original
+	# $t9 Diccionar temporal
+	# $t8 Mensaje temporal
+	# 
 	la $s4, decodedMessageBuffer
+			
 	# Loop mensaje
 	loop_main:
-            lb $t2, ($t0)  	   # message[i]
-            li $t3, 0		   # index = 0    		      
+			li $t3, 0		   # index = 0   
+            la $t2, ($t8)  	   # message[i]	
+     		move   $a0, $t2    # Cargar la dirección de la cadena en $a0
+     		jal  atoi
+    
+    		move $t2, $v0
             
-            # Loop diccionario
-			loop_child:    	
-        		lb $t4, ($t1)     
-        		blt $t3, $t2, increase_index # if( index < message[i].value )
-        		increase_index:
-        			addi $t1, $t1, 1   # avanza una posicion puntero diccionario[i + 1]
-        			j loop_child
-        		beq $t3, $t2, value_found
-        		value_found:
-        			lb $t5, ($t1) # $t5 = diccionario[index]
-        			sb $t5, ($s4)  # Almacenar el valor de $t5 en la ubicación actual de $s4
-    				addiu $s4, $s4, 4
-        		j end_loop_child
-    		end_loop_child:
-
-    		continue_main_loop:
-
-			beqz $t2, end_loop_main    			     
+            bltz $t2, end_loop_main
+            
+             		      
+			
+			move $a0, $t4
+    		li $v0, 1                # Código del sistema para imprimir cadena
+    		syscall
+			 
+			addi $t8, $t8, 8   # Continuar al siguiente caracter NO FUNCIONA
+			    			     
           	j loop_main           	# Volver al inicio del bucle principal
     end_loop_main:
     jal returnToMain

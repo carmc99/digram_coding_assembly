@@ -81,13 +81,13 @@ loop_save_encoded_message:
 
 	move $t7, $v0 # Pasar resultado conversion a $t7
 	
-    bltz $t8, end_loop_save_encoded_message  # Salir del bucle si el elemento es negativo
-
 	# Escribir en el archivo
     move $a0, $s7        # File descriptor devuelto por la llamada a abrir
     move $a1, $t7        # Dirección de la cadena que se escribirá en el archivo
     jal writeFile
     
+    bltz $t8, end_loop_save_encoded_message  # Salir del bucle si el elemento es negativo
+
     addiu $t9, $t9, 4  # Avanzar al siguiente elemento en el buffer
     j loop_save_encoded_message
 
