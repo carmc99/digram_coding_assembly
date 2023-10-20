@@ -24,7 +24,7 @@ decodedMessage:
         		increase_index:
         			addi $t1, $t1, 1   # avanza una posicion puntero diccionario[i + 1]
         			j loop_child
-        		beq $t3, $t2, value_found:
+        		beq $t3, $t2, value_found
         		value_found:
         			lb $t5, ($t1) # $t5 = diccionario[index]
         			sb $t5, ($s4)  # Almacenar el valor de $t5 en la ubicación actual de $s4
