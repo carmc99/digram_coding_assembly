@@ -86,39 +86,36 @@ print_buffer:
     # $t9: Direccion bufer mensaje codificado temporal
     # $t7: Elemento actual buffer ASCII
     # $t6: Buffer de salida archivo output.txt
+    
+    # Abrir el archivo para escribir        
+    la $a0, ouputFileName  		 # Dirección de la cadena que contiene el nombre del archivo
+    jal openWriteFile
+    
+    move $s7, $v0 # Almacenar descriptor
 loop_print_buffer:
     lb $t8, ($t9)  # Almacena elemento int
     
     move   $a0, $t8
+    
     # Llamar a la función itoa para convertir el entero en una cadena ASCII
     jal  itoa
 
 	move $t7, $v0 # Pasar resultado conversion a $t7
 	
-	sb $t7, ($t6)	# Almacenar caracter en buffer
-    addiu $t6, $t6, 1 # Avanzar puntero buffer de salida
-
-        
-	la	 $a0, ouputFileName	
-	move $a1, $t7
-    jal writeFile
-            
     bltz $t8, end_print_buffer  # Salir del bucle si el elemento es negativo
-    
-    #li $v0, 1
-    #move $a0, $t8  # Pasar la dirección del elemento a imprimir
-    #syscall
-    
-	li $v0, 4
-    move $a0, $t7  # Pasar la dirección del elemento a imprimir
-    syscall
-    
-    
+
+	# Escribir en el archivo
+    move $a0, $s7        # File descriptor devuelto por la llamada a abrir
+    move $a1, $t7        # Dirección de la cadena que se escribirá en el archivo
+    jal writeFile
     
     addiu $t9, $t9, 4  # Avanzar al siguiente elemento en el buffer
     j loop_print_buffer
 
-end_print_buffer:
-	
-    
+end_print_buffer: 
+ 	# Cerrar el archivo
+ 	
+    move $a0, $s7        # File descriptor devuelto por la llamada a abrir
+    jal closeWriteFile
+      
 	j end_program	

@@ -10,12 +10,14 @@
 .globl openFile
 .globl fileOpened
 .globl fileOpenError
+.globl openWriteFile
 .globl writeFile
+.globl closeWriteFile
 
 
-writeFile:
-    move $t0, $a0					# Param1: Direccion del archivo
-	move $t1, $a1					# Parama2: Buffer
+
+openWriteFile:
+	move $t0, $a0					# Param1: Direccion del archivo
     
     # Abrir el archivo para escribir
             
@@ -27,18 +29,28 @@ writeFile:
     # Verificar si hubo algún error al abrir el archivo
     bltz $v0, fileWriteOpenError
     
-    # Escribir en el archivo
-    move $a0, $v0        # File descriptor devuelto por la llamada a abrir
+    jr $ra
+
+writeFile:
+	move $t0, $a0					# Param1: Descriptor
+	move $t1, $a1					# Parama2: Buffer
+
+	# Escribir en el archivo
+    move $a0, $t0        # File descriptor devuelto por la llamada a abrir
     move $a1, $t1       # Dirección de la cadena que se escribirá en el archivo
-    li $a2, 8           # Longitud de la cadena a escribir
+    li $a2, 2           # Longitud de la cadena a escribir
     li $v0, 15           # Código de la llamada al sistema para escribir en el archivo
     syscall
 
     # Verificar si hubo algún error al escribir en el archivo
     bltz $v0, fileWriteError
-
-    # Cerrar el archivo
-    move $a0, $v0        # File descriptor devuelto por la llamada a abrir
+    
+    jr $ra
+    
+closeWriteFile:
+    move $t0, $a0					# Param1: Descriptor
+	
+	move $a0, $t0        # File descriptor devuelto por la llamada a abrir
     li $v0, 16           # Código de la llamada al sistema para cerrar el archivo
     syscall
 
