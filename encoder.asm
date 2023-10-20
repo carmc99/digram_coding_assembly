@@ -1,7 +1,6 @@
 .data 
 currentDigram:    .space 100
-errorReadMsg:	  .asciiz "Error al leer el archivo\n"
-encodedMessageBuffer: .space 1024
+encodedMessageBuffer: .byte 
 
 .text
 
@@ -76,14 +75,11 @@ encondedMessage:
     		j loop_child
     		continue_main_loop:
     		
-    		#li $v0, 1               
-    		#move $a0, $t2
-    		#syscall
+			li $v0, 1               
+    		move $a0, $t2
+    		syscall
     		
-    		sb $t2, ($s3)
-    		move $a0, $s3
-    		jal writeFile
-    
+			#### TODO: 
     		# Obtener $t2
     		# Escribir valor $t2 en output.txt
     		
@@ -93,6 +89,7 @@ encondedMessage:
 			beqz $t4, end_loop_main    			     
           	j loop_main           	# Volver al inicio del bucle principal
     end_loop_main:
+    
     jal returnToMain
 
 #### Reiniciar valores ####
