@@ -56,17 +56,13 @@ decodedMessage:
         			j end_loop_main
         		value_found:
         			
+        			move $a0, $t5
+    				li $v0, 1                # Código del sistema para imprimir cadena
+    				syscall
     				
-    				
-  
-        					move $a0, $t5
-    						li $v0, 1                # Código del sistema para imprimir cadena
-    						syscall
-    				
-        					sb $t5, ($s4)  # Almacenar el valor de $t5 en la ubicación actual de $s4
-    						addiu $s4, $s4, 4
+        			sb $t5, ($s4)  # Almacenar el valor de $t5 en la ubicación actual de $s4
+    				addiu $s4, $s4, 1
         					
-    					
         			bne $t6, 0xD, if_not_equal_CR_3
         			j end_loop_child
         			if_not_equal_CR_3:
@@ -79,7 +75,7 @@ decodedMessage:
     						syscall
     				
         					sb $t6, ($s4)
-        					addiu $s4, $s4, 4
+        					addiu $s4, $s4, 1
         		j end_loop_child
     		end_loop_child:
             

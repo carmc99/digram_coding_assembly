@@ -42,6 +42,20 @@ main:
     jal decodedMessage
     
     returnToMain:
+    
+
+    la $a0, ouputFileName  		 
+    jal openWriteFile
+    
+    move $s7, $v0 # Almacenar descriptor
+    
+    ###
+    # TODO: Corregir no esta escribiendo nada en la salida, pero si esta en el buffer
+    ####
+    # Escribir en el archivo
+    move $a0, $s7        # File descriptor devuelto por la llamada a abrir
+    move $a1, $s4        # Dirección de la cadena que se escribirá en el archivo
+    jal writeFile
 
 end_program:
     # terminate program
