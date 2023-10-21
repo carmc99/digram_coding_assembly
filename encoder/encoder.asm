@@ -75,9 +75,9 @@ encondedMessage:
     		j loop_child
     		continue_main_loop:
     		
-			#li $v0, 1               
-    		#move $a0, $t2
-    		#syscall
+			li $v0, 1               
+    		move $a0, $t2
+    		syscall
     		
     		sb $t2, ($s3)  # Almacenar el valor de $t2 en la ubicación actual de $s3
     		addiu $s3, $s3, 4

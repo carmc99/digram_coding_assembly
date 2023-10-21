@@ -38,10 +38,6 @@ main:
     # $a0 <- proviene el descriptor, por ello no se especifica
     syscall
   
-   	move $a0, $s1
-    li $v0, 4                # Código del sistema para imprimir cadena
-    syscall
-    
     move $a0, $s1
     jal decodedMessage
     
