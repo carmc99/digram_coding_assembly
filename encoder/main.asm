@@ -13,7 +13,7 @@
 main:
 	#####
 	# TAMANO DEL DICCIONARIO
-	li $s2, 254
+	li $s2, 255
 	#####
 	
 	la	$a0, digramFileName	

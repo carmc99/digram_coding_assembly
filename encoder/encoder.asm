@@ -41,7 +41,7 @@ encondedMessage:
     				addiu $s3, $s3, 4
     				
             		addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
-            		
+            		j reset_values
             		j if_carriage_return_end
             if_carriage_return_end:
             
@@ -56,6 +56,7 @@ encondedMessage:
             		#addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
             		#lb $t4, ($t0)
             		
+            		j reset_values
             		j loop_main
             if_line_feed_end:
             
