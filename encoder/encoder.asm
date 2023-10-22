@@ -28,8 +28,11 @@ encondedMessage:
 	la $s3, encodedMessageBuffer
 	loop_main:
 	 		lb $t3, ($t0)  	   # Primer caracter mensaje
-	 		
-			beq $t4, 0xD, if_carriage_return
+	 		#lb $t4, ($t0)      # Segundo caracter mensaje
+    		addi $t0, $t0, 1
+    		lb $t4, ($t0)      # Segundo caracter mensaje
+    		
+			beq $t3, 0xD, if_carriage_return
             j if_carriage_return_end
             	if_carriage_return:
             		li $t2, 13
@@ -38,12 +41,11 @@ encondedMessage:
     				addiu $s3, $s3, 4
     				
             		addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
-            		lb $t4, ($t0)
-            	
+            		
             		j if_carriage_return_end
             if_carriage_return_end:
             
-            beq $t3, 0xA, if_line_feed
+            beq $t4, 0xA, if_line_feed
             j if_line_feed_end 
             	if_line_feed:
             		li $t2, 10
@@ -51,15 +53,14 @@ encondedMessage:
             		sw $t2, ($s3)  # Almacenar el valor de $t2 en la ubicación actual de $s3
     				addiu $s3, $s3, 4
             		
-            		addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
-            		lb $t3, ($t0)
+            		#addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
+            		#lb $t4, ($t0)
             		
             		j loop_main
             if_line_feed_end:
             
            
-            addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
-    		lb $t4, ($t0)      # Segundo caracter mensaje
+           
              
             
             
@@ -80,7 +81,12 @@ encondedMessage:
         		beq $t3, $t5, if_second_character_equal
 				j loop_child_continue
     			if_second_character_equal:
+    				beq $t4, 0xD, go_if_digram_found
+    				j continue_pair_digram_found
+    				continue_pair_digram_found:
     				beq $t4, $t6, pair_digram_found
+    				j go_if_digram_found
+    				go_if_digram_found:
     				beq $t8, 1, digram_found
 					j loop_child_continue
 				digram_found:
@@ -88,7 +94,9 @@ encondedMessage:
 					j end_loop_child
 				pair_digram_found:
 					li $t7, 1        # establecer bandera en verdadero
-					addi $t0, $t0, 1 # Avanza una posicion adicional en el mensaje, dado que se encontro un par
+					addi $t0, $t0, 1
+					lb $t3, ($t0)
+					#subi $t0, $t0, 1
 					j end_loop_child	
 				loop_child_continue:
 					beq $t6, 0xD, if_value_equal_CR # Valida que el caracter siguiente sea carriage_return
