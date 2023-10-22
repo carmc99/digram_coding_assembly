@@ -27,6 +27,32 @@ decodedMessage:
      		
     		move $t2, $v0
             
+            beq $t2, 0xD, if_carriage_return
+            j if_carriage_return_end
+            	if_carriage_return:
+            		li $t5, 13
+            		
+            		sb $t5, ($s4)  # Almacenar el valor de $t2 en la ubicación actual de $s3
+    				addiu $s4, $s4, 1
+					
+					addi $t8, $t8, 8   # Continuar al siguiente caracter
+					
+            		j loop_main
+            if_carriage_return_end:
+            
+            beq $t2, 0xA, if_line_feed
+            j if_line_feed_end 
+            	if_line_feed:
+            		li $t5, 10
+            		
+            		sb $t5, ($s4)  # Almacenar el valor de $t2 en la ubicación actual de $s3
+    				addiu $s4, $s4, 1
+					
+					addi $t8, $t8, 8   # Continuar al siguiente caracter
+					
+            		j loop_main
+            if_line_feed_end:
+            
             #########
             # Loop diccionario
 			loop_child:    	
@@ -75,7 +101,7 @@ decodedMessage:
     						syscall
     				
         					sb $t6, ($s4)
-        					addiu $s4, $s4, 8
+        					addiu $s4, $s4, 1
         		j end_loop_child
     		end_loop_child:
             
