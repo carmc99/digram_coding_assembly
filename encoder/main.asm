@@ -13,7 +13,7 @@
 main:
 	#####
 	# TAMANO DEL DICCIONARIO
-	li $s2, 8
+	li $s2, 256
 	#####
 	
 	la	$a0, digramFileName	
@@ -43,6 +43,12 @@ main:
     
     returnToMain:
     
+    #lb $t8, ($s3)
+    
+    #li $v0, 1
+    #move $a0,$t8
+    #syscall
+     
     move $a0, $s3
     jal saveEncodedMessage
 
@@ -72,8 +78,16 @@ saveEncodedMessage:
     
     move $s7, $v0 # Almacenar descriptor
 loop_save_encoded_message:
-
+	
+	# Dado que el valor de almaceno usando el metodo complemento a 2
+	# Es necesario realizar la siguiente validacion: < -2, cargar sin signo, ver: https://en.wikipedia.org/wiki/Two%27s_complement
     lb $t8, ($t9)  # Almacena elemento int
+    blt $t8, -2, use_lbu # Usar lb
+    j continue
+		use_lbu: 
+			lbu $t8, ($t9)
+	
+	continue:	
     move   $a0, $t8
     
     # Llamar a la función itoa para convertir el entero en una cadena ASCII

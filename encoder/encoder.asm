@@ -1,6 +1,6 @@
 .data 
 currentDigram:    .space 100
-encodedMessageBuffer: .space 1024 
+encodedMessageBuffer: .float 1024 
 
 .text
 
@@ -24,17 +24,26 @@ encondedMessage:
 	# $t6 Segundo caracter diccionario
 	# $t7 Bandera, digrama encontrado
 	# $t8 Determina si se buscara un digrama o solo un caracter en el diccionario
-	li $t2, 0
+	li $t2, 1
 	la $s3, encodedMessageBuffer
 	loop_main:
-            lb $t3, ($t0)  	   
+            lb $t3, ($t0)  	   # Primer caracter mensaje
             addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
-    		lb $t4, ($t0)      
+    		lb $t4, ($t0)      # Segundo caracter mensaje
             
+            # Valida el fin del mensaje
+            beq $t3, $zero, if_first_char_equal_end_line
+            j loop_child
+            if_first_char_equal_end_line:
+            	beq $t4, $zero, if_second_char_equal_end_line
+            	j loop_child
+            		if_second_char_equal_end_line:
+            			j end_loop_main
+            		
 			loop_child:    	
-        		lb $t5, ($t1)     
+        		lb $t5, ($t1)      # Primer caracter diccionario
         		addi $t1, $t1, 1   # avanza una posicion puntero diccionario[i + 1]
-    			lb $t6, ($t1)      
+    			lb $t6, ($t1)      # Segundo caracter diccionario
         		
         		beq $t3, $t5, if_second_character_equal
 				j loop_child_continue
@@ -79,7 +88,8 @@ encondedMessage:
     		move $a0, $t2
     		syscall
     		
-    		sb $t2, ($s3)  # Almacenar el valor de $t2 en la ubicación actual de $s3
+    		
+    		sw $t2, ($s3)  # Almacenar el valor de $t2 en la ubicación actual de $s3
     		addiu $s3, $s3, 4
     		
     		#### Reiniciar valores ####
@@ -98,7 +108,7 @@ encondedMessage:
 #### Reiniciar valores ####
 reset_values:
 	move $t1, $s0
-	li $t2, 0
+	li $t2, 1	# Contador
     li $t5, 0
     li $t6, 0
     li $t7, 0
