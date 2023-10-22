@@ -20,7 +20,7 @@ decodedMessage:
 			
 	# Loop mensaje
 	loop_main:
-			li $s2, 0		   # index = 0   
+			li $s2, 1		   # index = 0   
             la $t2, ($t8)  	   # message[i]	
      		move   $a0, $t2    # Cargar la dirección de la cadena en $a0
      		jal  atoi		   # Convertir Ascii a entero	
@@ -75,7 +75,7 @@ decodedMessage:
     						syscall
     				
         					sb $t6, ($s4)
-        					addiu $s4, $s4, 1
+        					addiu $s4, $s4, 8
         		j end_loop_child
     		end_loop_child:
             
@@ -92,6 +92,7 @@ decodedMessage:
 			jal reset_values
           	j loop_main           	# Volver al inicio del bucle principal
     end_loop_main:
+    la $s4, decodedMessageBuffer	# Reiniciar puntero buffer
     jal returnToMain
 
 #### Reiniciar valores ####
