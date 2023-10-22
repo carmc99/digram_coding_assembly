@@ -1,6 +1,6 @@
 .data 
 currentDigram:    .space 100
-encodedMessageBuffer: .float 1024 
+encodedMessageBuffer: .float 1024
 
 .text
 
@@ -27,9 +27,41 @@ encondedMessage:
 	li $t2, 1
 	la $s3, encodedMessageBuffer
 	loop_main:
-            lb $t3, ($t0)  	   # Primer caracter mensaje
+	 		lb $t3, ($t0)  	   # Primer caracter mensaje
+	 		
+			beq $t4, 0xD, if_carriage_return
+            j if_carriage_return_end
+            	if_carriage_return:
+            		li $t2, 13
+            		
+            		sw $t2, ($s3)  # Almacenar el valor de $t2 en la ubicación actual de $s3
+    				addiu $s3, $s3, 4
+    				
+            		addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
+            		lb $t4, ($t0)
+            	
+            		j if_carriage_return_end
+            if_carriage_return_end:
+            
+            beq $t3, 0xA, if_line_feed
+            j if_line_feed_end 
+            	if_line_feed:
+            		li $t2, 10
+            		
+            		sw $t2, ($s3)  # Almacenar el valor de $t2 en la ubicación actual de $s3
+    				addiu $s3, $s3, 4
+            		
+            		addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
+            		lb $t3, ($t0)
+            		
+            		j loop_main
+            if_line_feed_end:
+            
+           
             addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
     		lb $t4, ($t0)      # Segundo caracter mensaje
+             
+            
             
             # Valida el fin del mensaje
             beq $t3, $zero, if_first_char_equal_end_line
