@@ -1,5 +1,4 @@
 .data 
-currentDigram:    .space 100
 encodedMessageBuffer: .float 1024
 
 .text
@@ -15,6 +14,7 @@ encondedMessage:
 	# $s1 Mensaje original
 	# $s2 Tamano del diccionario
 	# $s3 Buffer que contiene el mensaje codificado
+	# $s4 Tamano del mensaje codificado
 	# $t0 Mensaje temporal
 	# $t1 Diccionario temporal
 	# $t2 Contador
@@ -28,7 +28,6 @@ encondedMessage:
 	la $s3, encodedMessageBuffer
 	loop_main:
 	 		lb $t3, ($t0)  	   # Primer caracter mensaje
-	 		#lb $t4, ($t0)      # Segundo caracter mensaje
     		addi $t0, $t0, 1
     		lb $t4, ($t0)      # Segundo caracter mensaje
     		
@@ -53,17 +52,9 @@ encondedMessage:
             		sw $t2, ($s3)  # Almacenar el valor de $t2 en la ubicación actual de $s3
     				addiu $s3, $s3, 4
             		
-            		#addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
-            		#lb $t4, ($t0)
-            		
             		j reset_values
             		j loop_main
             if_line_feed_end:
-            
-           
-           
-             
-            
             
             # Valida el fin del mensaje
             beq $t3, $zero, if_first_char_equal_end_line
@@ -91,13 +82,17 @@ encondedMessage:
     				beq $t8, 1, digram_found
 					j loop_child_continue
 				digram_found:
-					li $t7, 1        # establecer bandera en verdadero
+					li $t7, 1        	# establecer bandera en verdadero
+					addi $s4, $s4, 1 	# aumentar contador tamano mensaje codificado
+					
 					j end_loop_child
 				pair_digram_found:
-					li $t7, 1        # establecer bandera en verdadero
-					addi $t0, $t0, 1
+					li $t7, 1        	# establecer bandera en verdadero
+					addi $s4, $s4, 1 	# aumentar contador tamano mensaje codificado
+					 
+					addi $t0, $t0, 1 	
 					lb $t3, ($t0)
-					#subi $t0, $t0, 1
+
 					j end_loop_child	
 				loop_child_continue:
 					beq $t6, 0xD, if_value_equal_CR # Valida que el caracter siguiente sea carriage_return
@@ -125,11 +120,12 @@ encondedMessage:
     		j loop_child
     		continue_main_loop:
     		
-			li $v0, 1               
-    		move $a0, $t2
-    		syscall
-    		
-    		
+    		#### DEBUG ####
+			#li $v0, 1               
+    		#move $a0, $t2
+    		#syscall
+    		#### DEBUG #####
+    		   		
     		sw $t2, ($s3)  # Almacenar el valor de $t2 en la ubicación actual de $s3
     		addiu $s3, $s3, 4
     		

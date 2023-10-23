@@ -109,6 +109,7 @@ fileOpened:
 	
 	bltz $v0, fileReadError     	# Si $v0 es menor que cero, erro al leer el archivo
 	
+	move $v1, $v0  			 # Devolver cantidad de caracteres en $v1
     move $v0, $a1 			 # Devolver la dirección del búfer en $v0
     
 	jr $ra
