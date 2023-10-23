@@ -1,5 +1,5 @@
 .data 
-decodedMessageBuffer: .space 1024 
+decodedMessageBuffer: .space 4096 
 
 .text
 
