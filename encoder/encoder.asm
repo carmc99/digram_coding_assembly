@@ -40,7 +40,9 @@ encondedMessage:
     				addiu $s3, $s3, 4
     				
             		addi $t0, $t0, 1   # avanza una posicion puntero mensaje[i + 1]
-            		j reset_values
+            		
+            		li $t2, 1	# Reiniciar contador
+            		
             		j if_carriage_return_end
             if_carriage_return_end:
             
@@ -52,7 +54,8 @@ encondedMessage:
             		sw $t2, ($s3)  # Almacenar el valor de $t2 en la ubicación actual de $s3
     				addiu $s3, $s3, 4
             		
-            		j reset_values
+            		li $t2, 1	# Reiniciar contador
+            		
             		j loop_main
             if_line_feed_end:
             
@@ -121,9 +124,9 @@ encondedMessage:
     		continue_main_loop:
     		
     		#### DEBUG ####
-			#li $v0, 1               
-    		#move $a0, $t2
-    		#syscall
+			li $v0, 1               
+    		move $a0, $t2
+    		syscall
     		#### DEBUG #####
     		   		
     		sw $t2, ($s3)  # Almacenar el valor de $t2 en la ubicación actual de $s3
@@ -135,8 +138,6 @@ encondedMessage:
 			beqz $t4, end_loop_main    			     
           	j loop_main           	# Volver al inicio del bucle principal
     end_loop_main:
-    li $t2, -1
-    sb $t2, ($s3)   # Almacena un -1 al final, para indicar que alli finaliza el mensaje
     la $s3, encodedMessageBuffer # Reiniciar el puntero
     
     # Retorna: $s3 buffer con mensaje codificado

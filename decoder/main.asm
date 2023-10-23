@@ -2,9 +2,9 @@
 	digramFileName:   .asciiz "dictionary.txt"  	# Nombre del archivo que contiene el diccionario
 	digramBuffer:     .space  1024  				# Buffer para el diccionario
 	inputFileName:    .asciiz "output.txt"			# Nombre del archivo a decodificar
-	inputFileBuffer:  .space  1024  				# Buffer para el archivo a codificar
+	inputFileBuffer:  .space  4096  				# Buffer para el archivo a codificar
 	ouputFileName:    .asciiz "decoded.txt"  		# Nombre del archivo resultante
-	ouputFileBuffer:  .space  1024  				# Buffer para el diccionario
+	ouputFileBuffer:  .space  4096  				# Buffer para el diccionario
 	
 .text
 

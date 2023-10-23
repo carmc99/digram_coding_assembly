@@ -37,6 +37,8 @@ decodedMessage:
 					
 					addi $t8, $t8, 8   # Continuar al siguiente caracter
 					
+					li $s2, 1 # Reiniciar indice
+					
             		j loop_main
             if_carriage_return_end:
             
@@ -49,6 +51,8 @@ decodedMessage:
     				addiu $s4, $s4, 1
 					
 					addi $t8, $t8, 8   # Continuar al siguiente caracter
+					
+					li $s2, 1 # Reiniciar indice
 					
             		j loop_main
             if_line_feed_end:
@@ -114,7 +118,7 @@ decodedMessage:
     		#syscall
     		#### DEBUG ###
     		
-            bltz $t2, end_loop_main	# Si entero es negativo indica fin del mensaje
+            blez $t2, end_loop_main	# Si entero es 0 indica fin del mensaje
 			 
 			addi $t8, $t8, 8   # Continuar al siguiente caracter
 			
@@ -127,6 +131,7 @@ decodedMessage:
 #### Reiniciar valores ####
 reset_values:
 	move $t9, $s0 # Reinicia puntero diccionario	     
+    li $s2, 1
     li $t5, 0
     li $t6, 0
     jr $ra

@@ -2,9 +2,9 @@
 	digramFileName:   .asciiz "dictionary.txt"  	# Nombre del archivo que contiene el diccionario
 	digramBuffer:     .space  1024  			# Buffer para el diccionario
 	inputFileName:    .asciiz "digram_test.java"	# Nombre del archivo a codificar
-	inputFileBuffer:  .space  1024  			# Buffer para el archivo a codificar
+	inputFileBuffer:  .space  4096  			# Buffer para el archivo a codificar
 	ouputFileName:    .asciiz "output.txt"  	# Nombre del archivo que contiene el diccionario
-	ouputFileBuffer:  .space  1024  			# Buffer para el diccionario
+	ouputFileBuffer:  .space  4096  			# Buffer para el diccionario
 	compressionIndexMsg: .asciiz "La tasa de compresion es: \n"  
 .text
 
@@ -116,8 +116,8 @@ loop_save_encoded_message:
     move $a0, $s7        # File descriptor devuelto por la llamada a abrir
     move $a1, $t7        # Dirección de la cadena que se escribirá en el archivo
     jal writeFile
-    
-    bltz $t8, end_loop_save_encoded_message  # Salir del bucle si el elemento es negativo
+        
+    blez $t8, end_loop_save_encoded_message  # Salir del bucle si el elemento es negativo
 
     addiu $t9, $t9, 4  # Avanzar al siguiente elemento en el buffer
     j loop_save_encoded_message

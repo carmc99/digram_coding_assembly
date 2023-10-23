@@ -1,5 +1,4 @@
 .data
-	buffer:           .space  1024  			# Buffer para leer el archivo
 	errorOpenMsg:     .asciiz "Error al abrir el archivo\n"
 	errorReadMsg:	  .asciiz "Error al leer el archivo\n"
 	errorOpenWriteFileMsg: .asciiz "Error al abrir el archivo de escritura\n"
@@ -104,7 +103,7 @@ fileOpened:
     li $v0, 14               # Código del sistema para leer desde el archivo
     move $a0, $t0            # Descriptor de archivo
     move $a1, $t1            # Dirección del búfer
-    li $a2, 1024             # Número máximo de bytes a leer
+    li $a2, 4096             # Número máximo de bytes a leer
     syscall
 	
 	bltz $v0, fileReadError     	# Si $v0 es menor que cero, erro al leer el archivo

@@ -1,5 +1,4 @@
 .data
-	buffer:           .space  1024  			# Buffer para leer el archivo
 	errorOpenMsg:     .asciiz "Error al abrir el archivo\n"
 	errorReadMsg:	  .asciiz "Error al leer el archivo\n"
 	errorOpenWriteFileMsg: .asciiz "Error al abrir el archivo de escritura\n"
@@ -9,7 +8,6 @@
 
 .globl openFile
 .globl fileOpened
-.globl fileOpenError
 .globl openWriteFile
 .globl writeFile
 .globl closeWriteFile
@@ -38,7 +36,7 @@ writeFile:
 	# Escribir en el archivo
     move $a0, $t0        # File descriptor devuelto por la llamada a abrir
     move $a1, $t1       # Dirección de la cadena que se escribirá en el archivo
-    li $a2, 1024           # Longitud de la cadena a escribir
+    li $a2, 4096           # Longitud de la cadena a escribir
     li $v0, 15           # Código de la llamada al sistema para escribir en el archivo
     syscall
 
@@ -104,7 +102,7 @@ fileOpened:
     li $v0, 14               # Código del sistema para leer desde el archivo
     move $a0, $t0            # Descriptor de archivo
     move $a1, $t1            # Dirección del búfer
-    li $a2, 1024             # Número máximo de bytes a leer
+    li $a2, 4096             # Número máximo de bytes a leer
     syscall
 	
 	bltz $v0, fileReadError     	# Si $v0 es menor que cero, erro al leer el archivo
