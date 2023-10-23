@@ -15,7 +15,7 @@ decodedMessage:
 	# $s1 Mensaje original
 	# $t9 Diccionar temporal
 	# $t8 Mensaje temporal
-	# 
+
 	la $s4, decodedMessageBuffer
 			
 	# Loop mensaje
@@ -53,7 +53,6 @@ decodedMessage:
             		j loop_main
             if_line_feed_end:
             
-            #########
             # Loop diccionario
 			loop_child:    	
         		lb $t5, ($t9)      # Caracter actual
@@ -82,9 +81,11 @@ decodedMessage:
         			j end_loop_main
         		value_found:
         			
-        			move $a0, $t5
-    				li $v0, 1                # Código del sistema para imprimir cadena
-    				syscall
+        			#### DEBUG ###
+        			#move $a0, $t5
+    				#li $v0, 1                # Código del sistema para imprimir cadena
+    				#syscall
+    				#### DEBUG ###
     				
         			sb $t5, ($s4)  # Almacenar el valor de $t5 en la ubicación actual de $s4
     				addiu $s4, $s4, 1
@@ -94,22 +95,24 @@ decodedMessage:
         			if_not_equal_CR_3:
         				bne $t6, 0xA, if_not_equal_LF_3
         				if_not_equal_LF_3:
-        					#addi $t8, $t8, 8		# Como encontro un par avanza otra posicion en el puntero del mensaje
+
+							#### DEBUG ###
+        					#move $a0, $t6
+    						#li $v0, 1                # Código del sistema para imprimir cadena
+    						#syscall
+    				 		#### DEBUG ###
         					
-        					move $a0, $t6
-    						li $v0, 1                # Código del sistema para imprimir cadena
-    						syscall
-    				
         					sb $t6, ($s4)
         					addiu $s4, $s4, 1
         		j end_loop_child
     		end_loop_child:
             
             
-            ########
+            #### DEBUG ###
             #move $a0, $t2
     		#li $v0, 1                # Código del sistema para imprimir cadena
     		#syscall
+    		#### DEBUG ###
     		
             bltz $t2, end_loop_main	# Si entero es negativo indica fin del mensaje
 			 
