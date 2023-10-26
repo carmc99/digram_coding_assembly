@@ -1,5 +1,5 @@
 .data 
-encodedMessageBuffer: .float 1024
+encodedMessageBuffer: .float 4096
 
 .text
 

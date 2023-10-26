@@ -14,7 +14,6 @@
 .globl closeWriteFile
 
 
-
 openWriteFile:
 	move $t0, $a0					# Param1: Direccion del archivo
     

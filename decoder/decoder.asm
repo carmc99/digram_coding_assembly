@@ -5,16 +5,19 @@ decodedMessageBuffer: .space 4096
 
 .globl decodedMessage
       
-# Funcion para codificar un mensaje
-
+# Funcion para decodificar un mensaje
 decodedMessage:
 	move $t9, $s0		# Diccionario temporal
 	move $t8, $a0		# Param1: Buffer que contiene el mensaje a decodificar 		
 	# Registros
 	# $s0 Diccionario original
 	# $s1 Mensaje original
+	# $s4 Buffer que contiene el mensaje decodificado
 	# $t9 Diccionar temporal
 	# $t8 Mensaje temporal
+	# $s2 Contador
+	# $t2 Posicion del digrama
+
 
 	la $s4, decodedMessageBuffer
 			
@@ -32,7 +35,7 @@ decodedMessage:
             	if_carriage_return:
             		li $t5, 13
             		
-            		sb $t5, ($s4)  # Almacenar el valor de $t2 en la ubicación actual de $s3
+            		sb $t5, ($s4)  # Almacenar el valor de $t2 en la ubicación actual de $s4
     				addiu $s4, $s4, 1
 					
 					addi $t8, $t8, 8   # Continuar al siguiente caracter
